@@ -118,7 +118,7 @@ th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;
         <h2 id="h-log">Log a position</h2>
         <div class="row">
           <div><label for="f-sym">Symbol</label><input id="f-sym" placeholder="e.g. CRDO" autocomplete="off"></div>
-          <div><label for="f-t212">T212 ticker</label><input id="f-t212" placeholder="CRDO_US_EQ" autocomplete="off"></div>
+          <div><label for="f-broker">Broker ticker</label><input id="f-broker" placeholder="CRDO_US_EQ" autocomplete="off"></div>
         </div>
         <div class="row row3">
           <div><label for="f-date">Entry date</label><input id="f-date" type="date"></div>
@@ -134,7 +134,7 @@ th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;
         <div class="row"><div style="grid-column:1/-1"><label for="f-why">Why this trade</label><input id="f-why" autocomplete="off" placeholder="Rank, score, what you saw"></div></div>
         <div class="actions"><button class="primary" id="f-save">Log position</button></div>
         <div class="msg" id="f-msg" role="status"></div>
-        <p class="note">Estimated cost converts $ at the current rate and adds the 0.15% FX fee. Use the actual £ figure from your Trading 212 contract note if it differs — that is what leaves your account.</p>
+        <p class="note">Estimated cost converts $ at the current rate and adds the 0.15% FX fee. Use the actual £ figure from your broker contract note if it differs — that is what leaves your account.</p>
       </section>
 
       <section class="panel" aria-labelledby="h-alerts">
@@ -264,7 +264,7 @@ th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;
     const box = $('positions'); box.replaceChildren();
     const s = state.settings;
     if (!state.positions.length){
-      box.append(el('div','empty','No open positions. Log one after you buy it in Trading 212 — the alerts and monitoring have nothing to watch until then.'));
+      box.append(el('div','empty','No open positions. Log one after you buy it with your broker — the alerts and monitoring have nothing to watch until then.'));
       return; }
     state.positions.forEach(p => {
       const px = p.lastPrice ?? p.entry;
@@ -273,7 +273,7 @@ th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;
       const plGbp = gbpNow - (p.costGbp ?? gbpNow);
       const card = el('div','pos');
       const head = el('div','pos-head');
-      head.append(el('strong', null, p.symbol + (p.t212 ? ' · '+p.t212 : '')));
+      head.append(el('strong', null, p.symbol + (p.broker ? ' · '+p.broker : '')));
       const pn = el('span','pnl '+(chg<0?'loss':'good'), pct(chg));
       pn.append(el('span','alt', gbp(plGbp) + '  ·  ' + usd(posUsdNow(p) - p.qty*p.entry)));
       head.append(pn); card.append(head);
@@ -343,7 +343,7 @@ th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;
       if(!(px>0)){ msg.className='msg err'; msg.textContent='Enter the exit price.'; return; }
       if(!(proceeds>0)){ msg.className='msg err'; msg.textContent='Enter the £ proceeds.'; return; }
       const frac=qty/p.qty, cost=(p.costGbp ?? 0)*frac;
-      state.closed.push({id:uid(), symbol:p.symbol, t212:p.t212, openDate:p.date,
+      state.closed.push({id:uid(), symbol:p.symbol, broker:p.broker, openDate:p.date,
         closeDate:idt.value||today(), entry:p.entry, exit:px, qty,
         costGbp:+cost.toFixed(2), proceedsGbp:+proceeds.toFixed(2),
         plGbp:+(proceeds-cost).toFixed(2), plPct:+((px-p.entry)/p.entry*100).toFixed(2),
@@ -366,7 +366,7 @@ th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;
       const row=el('div','pick');
       row.append(el('span','rank',String(i+1)));
       const mid=el('div');
-      mid.append(el('div','sym',(p.symbol||'?')+(p.t212?'  ·  '+p.t212:'')));
+      mid.append(el('div','sym',(p.symbol||'?')+(p.broker?'  ·  '+p.broker:'')));
       const bits=[];
       if(p.stopPrice!=null) bits.push('stop '+usd(p.stopPrice)+(p.stopPct!=null?' ('+Number(p.stopPct).toFixed(1)+'%)':''));
       if(p.sizeGbp!=null) bits.push('size '+gbp(p.sizeGbp)+' ≈ '+usd(p.sizeGbp*rate()));
@@ -425,12 +425,12 @@ th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;
       +(shortlist.gatesFailed!=null?', '+shortlist.gatesFailed+' dropped at the gates':'')
       +'. The daily runs screen only these plus your open positions.'));
     const sc=el('div','scroll'), tb=el('table'), th=el('thead'), tr=el('tr');
-    ['#','Symbol','T212 ticker','Score','Close $','Sigma %/day','$ volume'].forEach(h=>tr.append(el('th',null,h)));
+    ['#','Symbol','Broker ticker','Score','Close $','Sigma %/day','$ volume'].forEach(h=>tr.append(el('th',null,h)));
     th.append(tr); tb.append(th);
     const bd=el('tbody');
     items.forEach((n,i)=>{
       const r=el('tr');
-      [i+1, n.symbol||'', n.t212||'', n.score!=null?Number(n.score).toFixed(2):'',
+      [i+1, n.symbol||'', n.broker||'', n.score!=null?Number(n.score).toFixed(2):'',
        n.close!=null?usd(n.close):'', n.sigma!=null?(n.sigma*100).toFixed(2):'',
        n.dollarVol!=null?'$'+(n.dollarVol/1e6).toFixed(1)+'m':'']
         .forEach(v=>r.append(el('td',null,String(v))));
@@ -472,13 +472,13 @@ th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;
     if(!(cost>0)) return fail('Enter what the position cost in £.');
     if(cost > state.cash + 0.01) return fail('That costs '+gbp(cost)+' but cash is '+gbp(state.cash)+'.');
     state.cash -= cost;
-    state.positions.push({id:uid(), symbol:sym, t212:$('f-t212').value.trim().toUpperCase()||null,
+    state.positions.push({id:uid(), symbol:sym, broker:$('f-broker').value.trim().toUpperCase()||null,
       date:$('f-date').value||today(), entry:px, qty, stop, costGbp:cost, fxAtEntry:rate(),
       why:$('f-why').value.trim()||null,
       lastPrice:null, lastAt:null, sigma:null, below20:null, nextEarnings:null});
-    ['f-sym','f-t212','f-px','f-qty','f-stop','f-cost','f-why','f-est'].forEach(i=>$(i).value='');
+    ['f-sym','f-broker','f-px','f-qty','f-stop','f-cost','f-why','f-est'].forEach(i=>$(i).value='');
     delete $('f-cost').dataset.touched; $('f-fxnote').textContent='';
-    m.className='msg good'; m.textContent='Logged '+sym+'. Place the stop order in Trading 212 if you haven’t.';
+    m.className='msg good'; m.textContent='Logged '+sym+'. Place the stop order with your broker if you haven’t.';
     save();
   };
 

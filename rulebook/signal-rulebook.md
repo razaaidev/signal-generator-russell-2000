@@ -27,8 +27,10 @@ at the top of every email.
 
 ## PART A — UNIVERSE
 
-**U1 — Long only.** You cannot short inside a Stocks & Shares ISA. Every candidate
-is a long. In a downtrend the correct output is fewer picks or none, never a short.
+**U1 — Long only.** The reference account type (a UK Stocks & Shares ISA) does not
+permit short positions, so every candidate is a long. In a downtrend the correct
+output is fewer picks or none — never a short. Check your own account before
+relaxing this.
 
 **U2 — The eligible list.** Candidates come only from `eligible-universe.md`:
 Russell 2000 constituents intersected with the instruments the broker actually
@@ -39,11 +41,12 @@ never be queried.
 judgement about the excluded names — see Part G. Raise the depth when the data
 plan allows; the file is ranked, so this is one number.
 
-**U4 — Identity.** Trading 212's `ticker` field preserves the symbol from when the
-instrument was added and goes stale after a rename. IonQ trades as `DMYI_US_EQ`;
-ASGN now displays as `EFOR`; EchoStar sits under `SATS_US_EQ`. Match on
-`shortName` first, ticker prefix second — matching on the prefix alone
-misclassified 233 names when this was built. Every email line carries the
+**U4 — Identity.** A broker's internal instrument ID often preserves the ticker
+from the day the instrument was listed and is never revised after a rename or a
+SPAC merger. The ID still points at the right company; it just spells a symbol
+that no longer exists publicly. Match on the broker's **current** display symbol
+first, the legacy ID prefix second — matching on the prefix alone misclassified
+233 names when this was built, in both directions. Every email line carries the
 **broker ticker to search** and the **symbol it currently displays**.
 
 **U5 — Re-verify quarterly.** Russell reconstitutes each June; brokers add and
@@ -125,7 +128,8 @@ max loss = size x stop%
 ```
 
 **Currency.** Prices are USD, the account is sterling. `rate` is GBP/USD (USD per
-GBP), refreshed every run. Trading 212 charges **0.15% FX each way**:
+GBP), refreshed every run. The reference broker charges **0.15% FX each way** —
+substitute your own rate:
 
 - a buy costs `(USD amount / rate) x 1.0015`
 - a sale nets `(USD amount / rate) x 0.9985`

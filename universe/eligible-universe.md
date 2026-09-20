@@ -1,13 +1,13 @@
-# ELIGIBLE UNIVERSE - Russell 2000 tradeable in a Trading 212 ISA
+# ELIGIBLE UNIVERSE - index constituents tradeable in your brokerage account
 #
 # 1769 valid constituents -> 1652 tradeable (93.4%).
-# 117 not offered by Trading 212; listed at the end and never queried.
+# 117 not offered by the broker; listed at the end and never queried.
 # Matched via current symbol: 1623; via stale ticker prefix: 29.
 #
-# `t212Ticker` is what you search in the app. `current` is the symbol it
-# displays now - these differ after a rename, so always show both.
+# `brokerTicker` is what you search in the broker app. `current` is the symbol
+# it displays now - these differ after a rename, so always show both.
 #
-# rank | symbol | t212Ticker | current | idxWeight% | matchedBy | name
+# rank | symbol | brokerTicker | current | idxWeight% | matchedBy | name
 1 | CRDO | CRDO_US_EQ | CRDO | 0.8600 | shortName | Credo Technology
 2 | IONQ | DMYI_US_EQ | IONQ | 0.5000 | shortName | IonQ
 3 | BE | BE_US_EQ | BE | 0.4900 | shortName | Bloom Energy

@@ -63,7 +63,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
 </style>
 
 <div class="wrap">
-  <p class="eyebrow">Signal Generator · Russell 2000 · Trading 212 ISA</p>
+  <p class="eyebrow">Signal Generator · Russell 2000 · broker-tradeable subset</p>
   <h1>How The Five Picks Are Made</h1>
   <p class="standfirst">Two filters and one score. A name is removed by any gate it fails, and whatever survives is ranked on four measures — then the top five are sized and emailed.</p>
 
@@ -137,11 +137,11 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
         <g font-size="13" fill="var(--ink)" text-anchor="middle">
           <text x="285" y="58" font-weight="700">Russell 2000</text>
           <text x="285" y="74" font-size="11.5" fill="var(--muted)">1,769 constituents (IWM holdings)</text>
-          <text x="605" y="58" font-weight="700">Trading 212 instrument list</text>
-          <text x="605" y="74" font-size="11.5" fill="var(--muted)">17,910 · your ISA's own API</text>
+          <text x="605" y="58" font-weight="700">Broker instrument list</text>
+          <text x="605" y="74" font-size="11.5" fill="var(--muted)">your account's own catalogue</text>
 
-          <text x="445" y="150" font-weight="700">Tradeable in your ISA — 1,652</text>
-          <text x="445" y="168" font-size="11.5" fill="var(--muted)">matched on current symbol, not the stale ticker ID</text>
+          <text x="445" y="150" font-weight="700">Tradeable in your account — 1,652</text>
+          <text x="445" y="168" font-size="11.5" fill="var(--muted)">matched on current symbol, not the stale broker ID</text>
 
           <text x="445" y="246" font-weight="700">Working universe — top 600</text>
           <text x="445" y="262" font-size="11.5" fill="var(--muted)">by index weight · 78% of the index</text>
@@ -165,7 +165,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
         </g>
       </svg>
       </div>
-      <figcaption>The 117 names Trading 212 doesn't offer are excluded once and never queried again. Open positions are screened alongside the shortlist every run, whether or not they still rank.</figcaption>
+      <figcaption>The 117 names the broker does not offer are excluded once and never queried again. Open positions are screened alongside the shortlist every run, whether or not they still rank.</figcaption>
     </figure>
   </section>
 
@@ -313,7 +313,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;backgroun
   <section>
     <h2>What happens to a pick you buy</h2>
     <div class="callout">
-      <p><strong>Sizing.</strong> <code>stop% = 3.0 × the stock's 20-day daily sigma</code>, then <code>size £ = min(5% of account ÷ stop%, 25% of account, cash)</code>. On typical small-cap volatility the 25% cap binds, so four positions is a fully-invested book. The £ figure converts to dollars at the live rate plus Trading 212's 0.15% FX fee.</p>
+      <p><strong>Sizing.</strong> <code>stop% = 3.0 × the stock's 20-day daily sigma</code>, then <code>size £ = min(5% of account ÷ stop%, 25% of account, cash)</code>. On typical small-cap volatility the 25% cap binds, so four positions is a fully-invested book. The £ figure converts to dollars at the live rate plus your broker's FX fee.</p>
       <p><strong>Exits, in order.</strong> Stop hit, or 21 trading days elapsed. Nothing else — no profit target, no trailing stop.</p>
       <p><strong>Alerts.</strong> A close below the 20-day average, a breached stop, earnings moving inside five days, or day 19 of 21 each send their own email. The 20-day alert is a prompt to look, not an instruction to sell: tested as an exit rule it cut the median month by £2 and quadrupled the number of trades.</p>
       <p><strong>Monitoring only sees what is logged.</strong> A position bought and not recorded on the desk gets no stop check, no alert and no hold-period countdown.</p>

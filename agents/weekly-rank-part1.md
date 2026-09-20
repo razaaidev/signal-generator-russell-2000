@@ -37,7 +37,7 @@ Store the raw metrics for all 300 to `rankwork/part1`:
 
 ```json
 {"rankedAt": "<ISO>", "part": 1, "count": 300, "indexRs63": 0.0,
- "rows": [{"symbol","t212","close","sma20","sma50","sigma","dollarVol",
+ "rows": [{"symbol","broker","close","sma20","sma50","sigma","dollarVol",
            "mom126_21","rs63","riskAdjMom","pctOf52wHigh","g1","g2","g4","g5"}]}
 ```
 

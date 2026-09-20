@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
 Build the eligible universe: Russell 2000 constituents that are actually
-tradeable in a Trading 212 Stocks & Shares ISA.
+tradeable in your own brokerage account.
 
 Inputs
 ------
-  t212_instruments.json : the array returned by
-      GET https://live.trading212.com/api/v0/equity/metadata/instruments
-      (HTTP Basic auth: API_KEY:API_SECRET -- see README)
-  iwm_holdings.json     : an object with a "holdings" array of
+  broker_instruments.json : your broker's instrument catalogue, as an array of
+      objects with at least: ticker, type, currencyCode, shortName, isin, name.
+      Most brokers expose this from an authenticated metadata endpoint; see the
+      README for a worked example.
+  index_holdings.json     : an object with a "holdings" array of
       {"symbol", "description", "weight"} -- e.g. Alpha Vantage ETF_PROFILE
       for IWM, or any source giving Russell 2000 constituents and weights.
 
@@ -19,22 +20,29 @@ Output
 
 Why the matching is fiddly
 --------------------------
-Trading 212's `ticker` field preserves the symbol from the day the instrument
-was added and goes stale after a rename or a SPAC merger. IonQ trades as
-`DMYI_US_EQ`; ASGN now displays as `EFOR`; EchoStar sits under `SATS_US_EQ`.
-Matching Russell symbols against the ticker PREFIX alone misclassified 233
-names when this was first built -- in both directions, excluding names that
-are available and matching others to entirely different companies.
+Brokers commonly use an internal instrument ID that preserves the ticker from
+the day the instrument was listed, and never revise it after a rename, a SPAC
+merger or a re-domicile. The ID keeps pointing at the right company; it just
+spells a symbol that no longer exists publicly.
 
-So: match on `shortName` (the current symbol) first, ticker prefix second,
-and record which route was used.
+Matching index constituents against that ID alone misclassified 233 names when
+this was first built -- in both directions: excluding names that were perfectly
+available, and matching others to entirely different companies that had since
+taken over the freed-up ticker.
+
+So: match on the broker's CURRENT display symbol first, the legacy ID prefix
+second, and record which route each name took.
 """
 import json, re, sys, collections
 from pathlib import Path
 
 
-def load_t212(path):
-    """US common stock, USD, excluding warrants."""
+def load_broker(path):
+    """US common stock, USD, excluding warrants.
+
+    Adjust the filter below if your broker uses different type or ticker
+    conventions -- this matches a `SYMBOL_US_EQ` style ID.
+    """
     raw = json.loads(Path(path).read_text())
     by_short, by_prefix = {}, {}
     for x in raw:
@@ -44,7 +52,7 @@ def load_t212(path):
         if not t.endswith("_US_EQ") or "WAR" in t:
             continue
         rec = {
-            "t212Ticker": t,
+            "brokerTicker": t,
             "prefix": t.split("_US_EQ")[0],
             "short": (x.get("shortName") or "").strip().upper(),
             "isin": x.get("isin"),
@@ -76,8 +84,8 @@ def load_constituents(path):
     return out
 
 
-def build(t212_path, holdings_path):
-    by_short, by_prefix = load_t212(t212_path)
+def build(broker_path, holdings_path):
+    by_short, by_prefix = load_broker(broker_path)
     cons = load_constituents(holdings_path)
 
     universe, missing = {}, []
@@ -103,21 +111,21 @@ def write_markdown(universe, missing, how, n_cons, out_path):
     cons_w = total_w + 0  # weights of matched names only; see note below
 
     L = [
-        "# ELIGIBLE UNIVERSE - Russell 2000 tradeable in a Trading 212 ISA",
+        "# ELIGIBLE UNIVERSE - index constituents tradeable in your brokerage account",
         "#",
         f"# {n_cons} valid constituents -> {len(universe)} tradeable "
         f"({len(universe)/n_cons:.1%}).",
-        f"# {len(missing)} not offered by Trading 212; listed at the end and never queried.",
+        f"# {len(missing)} not offered by the broker; listed at the end and never queried.",
         f"# Matched via current symbol: {how['shortName']}; "
         f"via stale ticker prefix: {how['legacyTicker']}.",
         "#",
-        "# `t212Ticker` is what you search in the app. `current` is the symbol it",
-        "# displays now - these differ after a rename, so always show both.",
+        "# `brokerTicker` is what you search in the broker app. `current` is the symbol",
+        "# it displays now - these differ after a rename, so always show both.",
         "#",
-        "# rank | symbol | t212Ticker | current | idxWeight% | matchedBy | name",
+        "# rank | symbol | brokerTicker | current | idxWeight% | matchedBy | name",
     ]
     for i, x in enumerate(rows, 1):
-        L.append(f"{i} | {x['symbol']} | {x['t212Ticker']} | {x['short']} | "
+        L.append(f"{i} | {x['symbol']} | {x['brokerTicker']} | {x['short']} | "
                  f"{x['weight']*100:.4f} | {x['matchedBy']} | {x['name']}")
     L += ["", f"## NOT TRADEABLE - never query these ({len(missing)})", ", ".join(missing), ""]
     Path(out_path).write_text("\n".join(L))
@@ -125,8 +133,8 @@ def write_markdown(universe, missing, how, n_cons, out_path):
 
 def main():
     if len(sys.argv) < 3:
-        sys.exit(__doc__ + "\nusage: build_universe.py <t212_instruments.json> "
-                           "<iwm_holdings.json> [out.md]")
+        sys.exit(__doc__ + "\nusage: build_universe.py <broker_instruments.json> "
+                           "<index_holdings.json> [out.md]")
     out = sys.argv[3] if len(sys.argv) > 3 else "eligible-universe.md"
     universe, missing, how, n = build(sys.argv[1], sys.argv[2])
     write_markdown(universe, missing, how, n, out)
@@ -135,7 +143,7 @@ def main():
     print("matched:", dict(how))
     stale = [s for s, v in universe.items() if not v["symbolAgrees"]]
     if stale:
-        print(f"note: {len(stale)} names whose T212 ticker ID is a dead symbol, e.g. "
+        print(f"note: {len(stale)} names whose broker ID is a dead symbol, e.g. "
               + ", ".join(f"{s}->{universe[s]['short']}" for s in stale[:5]))
 
 

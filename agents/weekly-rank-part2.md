@@ -35,7 +35,7 @@ Write the top 40 to `shortlist/current`, and the same object to
 
 ```json
 {"rankedAt","universeSize","gatesFailed",
- "names":[{"symbol","t212","score","z":{"mom","rs","riskAdj","high52"},
+ "names":[{"symbol","broker","score","z":{"mom","rs","riskAdj","high52"},
            "sigma","dollarVol","close","sma20","sma50","nextEarnings"}]}
 ```
 
