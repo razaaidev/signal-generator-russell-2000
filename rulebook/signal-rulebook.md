@@ -236,6 +236,11 @@ rate-limit time.
 If a run exhausts its budget, stop, report what was completed, and say so in the
 email. Never fill gaps with estimates.
 
+Raising the depth of U3 is one number, but it is bounded by the plan: at 8
+credits/minute the free tier tops out near 900 names per run before the wall clock
+becomes unmanageable. The README's *Why 600 names* section sets out the options and
+what the first paid tier changes.
+
 ---
 
 ## PART H — RUN SCHEDULE
