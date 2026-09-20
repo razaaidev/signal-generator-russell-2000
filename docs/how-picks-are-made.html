@@ -1,0 +1,322 @@
+<title>How The Five Picks Are Made</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#f5f7f8; --panel:#ffffff; --ink:#101a22; --ink2:#3b4a56; --muted:#6a7885;
+  --line:#dde3e8; --soft:#eef2f5;
+  --accent:#16637a; --accent-soft:#dcedf2;
+  --keep:#1d7a4e; --keep-soft:#e4f3ea;
+  --drop:#b32d2d; --drop-soft:#fbe7e7;
+  --warn:#8f5b00; --warn-soft:#fbf0d9;
+  --shadow:0 1px 2px rgba(16,26,34,.05), 0 10px 26px -18px rgba(16,26,34,.4);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --ground:#0d1418; --panel:#152027; --ink:#e7eef3; --ink2:#bcc8d1; --muted:#8a99a5;
+  --line:#26343d; --soft:#1b272f;
+  --accent:#5fb3cc; --accent-soft:#12323c;
+  --keep:#5ccb93; --keep-soft:#143326;
+  --drop:#ef7f7f; --drop-soft:#3a1d1d;
+  --warn:#e0ac54; --warn-soft:#382c14;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.9);
+}}
+:root[data-theme="dark"]{
+  --ground:#0d1418; --panel:#152027; --ink:#e7eef3; --ink2:#bcc8d1; --muted:#8a99a5;
+  --line:#26343d; --soft:#1b272f;
+  --accent:#5fb3cc; --accent-soft:#12323c;
+  --keep:#5ccb93; --keep-soft:#143326;
+  --drop:#ef7f7f; --drop-soft:#3a1d1d;
+  --warn:#e0ac54; --warn-soft:#382c14;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.9);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.55;font-variant-numeric:tabular-nums}
+.wrap{max-width:960px;margin:0 auto;padding-block:32px 64px;padding-left:18px;padding-right:18px}
+@media(max-width:520px){.wrap{padding-left:16px;padding-right:16px}}
+.eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+h1{font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:clamp(1.7rem,4.4vw,2.3rem);
+   line-height:1.14;letter-spacing:-.016em;margin:0 0 12px;text-wrap:balance}
+.standfirst{color:var(--ink2);max-width:62ch;margin:0 0 4px;font-size:1.02rem}
+h2{font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:1.25rem;margin:0 0 4px;letter-spacing:-.01em}
+section{margin-top:40px}
+.lede{color:var(--muted);font-size:.92rem;margin:0 0 18px;max-width:64ch}
+figure{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+       padding:20px 18px 14px;box-shadow:var(--shadow)}
+figcaption{font-size:.81rem;color:var(--muted);line-height:1.5;margin-top:12px;padding-top:12px;border-top:1px solid var(--soft)}
+.scroll{overflow-x:auto;overflow-y:hidden;margin:0 -4px}
+svg{display:block;max-width:100%;height:auto}
+svg text{font-family:"Public Sans",system-ui,sans-serif}
+.tbl{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow-x:auto;margin-top:18px}
+table{width:100%;border-collapse:collapse;font-size:.87rem;min-width:560px}
+th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--soft);vertical-align:top}
+th{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:none}
+td.k{font-weight:600;white-space:nowrap}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;background:var(--soft);padding:1px 5px;border-radius:4px}
+.callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+         border-radius:10px;padding:16px 18px;margin-top:18px;box-shadow:var(--shadow)}
+.callout p{margin:0;font-size:.92rem;color:var(--ink2)}
+.callout p + p{margin-top:8px}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Signal Generator · Russell 2000 · Trading 212 ISA</p>
+  <h1>How The Five Picks Are Made</h1>
+  <p class="standfirst">Two filters and one score. A name is removed by any gate it fails, and whatever survives is ranked on four measures — then the top five are sized and emailed.</p>
+
+  <section>
+    <h2>The funnel</h2>
+    <p class="lede">Three stages on three different clocks. The expensive work happens once a week; the daily runs only re-check forty names.</p>
+    <figure>
+      <div class="scroll">
+      <svg viewBox="0 0 880 620" role="img" aria-label="Pipeline from 1,769 Russell 2000 constituents down to five daily picks, through a quarterly universe build, a weekly ranking pass and a twice-daily screen">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+          <marker id="ard" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--drop)"/>
+          </marker>
+          <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+
+        <!-- stage labels -->
+        <g font-size="11.5" fill="var(--muted)" font-weight="600" letter-spacing=".08em">
+          <text x="14" y="52">QUARTERLY</text>
+          <text x="14" y="272">WEEKLY</text>
+          <text x="14" y="482">TWICE DAILY</text>
+        </g>
+        <g stroke="var(--line)" stroke-width="1">
+          <line x1="14" y1="62" x2="14" y2="240"/>
+          <line x1="14" y1="282" x2="14" y2="450"/>
+          <line x1="14" y1="492" x2="14" y2="592"/>
+        </g>
+
+        <g stroke="currentColor" fill="none" stroke-width="1.6" color="var(--ink2)">
+          <!-- 1 -->
+          <rect x="150" y="36" width="270" height="48" rx="8" fill="var(--soft)"/>
+          <rect x="470" y="36" width="270" height="48" rx="8" fill="var(--soft)"/>
+          <line x1="285" y1="84" x2="285" y2="126" marker-end="url(#ar)"/>
+          <line x1="605" y1="84" x2="605" y2="126" marker-end="url(#ar)"/>
+          <!-- 2 -->
+          <rect x="280" y="128" width="330" height="52" rx="8" fill="var(--keep-soft)" stroke="var(--keep)"/>
+          <line x1="445" y1="180" x2="445" y2="222" marker-end="url(#ar)"/>
+          <!-- 3 -->
+          <rect x="300" y="224" width="290" height="48" rx="8" fill="var(--soft)"/>
+          <line x1="445" y1="272" x2="445" y2="316" marker-end="url(#ar)"/>
+          <!-- 4 weekly -->
+          <rect x="250" y="318" width="390" height="52" rx="8" fill="var(--soft)"/>
+          <line x1="445" y1="370" x2="445" y2="412" marker-end="url(#ar)"/>
+          <!-- 5 shortlist -->
+          <rect x="310" y="414" width="270" height="48" rx="8" fill="var(--keep-soft)" stroke="var(--keep)"/>
+          <line x1="445" y1="462" x2="445" y2="506" marker-end="url(#ar)"/>
+          <!-- 6 daily -->
+          <rect x="250" y="508" width="390" height="52" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+        </g>
+
+        <!-- dropped names -->
+        <g stroke="var(--drop)" fill="none" stroke-width="1.5">
+          <line x1="610" y1="154" x2="690" y2="154" marker-end="url(#ard)"/>
+        </g>
+        <rect x="694" y="134" width="172" height="40" rx="8" fill="var(--drop-soft)" stroke="var(--drop)" stroke-width="1.2"/>
+
+        <!-- positions side branch -->
+        <g stroke="var(--accent)" fill="none" stroke-width="1.5" stroke-dasharray="5 4">
+          <path d="M 90 576 L 90 534 L 244 534" marker-end="url(#ara)"/>
+          <path d="M 640 534 L 800 534 L 800 570" marker-end="url(#ara)"/>
+        </g>
+        <rect x="18" y="576" width="144" height="40" rx="8" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.2"/>
+        <rect x="728" y="576" width="144" height="40" rx="8" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.2"/>
+
+        <!-- text -->
+        <g font-size="13" fill="var(--ink)" text-anchor="middle">
+          <text x="285" y="58" font-weight="700">Russell 2000</text>
+          <text x="285" y="74" font-size="11.5" fill="var(--muted)">1,769 constituents (IWM holdings)</text>
+          <text x="605" y="58" font-weight="700">Trading 212 instrument list</text>
+          <text x="605" y="74" font-size="11.5" fill="var(--muted)">17,910 · your ISA's own API</text>
+
+          <text x="445" y="150" font-weight="700">Tradeable in your ISA — 1,652</text>
+          <text x="445" y="168" font-size="11.5" fill="var(--muted)">matched on current symbol, not the stale ticker ID</text>
+
+          <text x="445" y="246" font-weight="700">Working universe — top 600</text>
+          <text x="445" y="262" font-size="11.5" fill="var(--muted)">by index weight · 78% of the index</text>
+
+          <text x="445" y="340" font-weight="700">Gate, then score all 600</text>
+          <text x="445" y="357" font-size="11.5" fill="var(--muted)">two passes of ~300 · 600 credits · ~38 min each</text>
+
+          <text x="445" y="436" font-weight="700">Shortlist — 40</text>
+          <text x="445" y="452" font-size="11.5" fill="var(--muted)">highest composite scores</text>
+
+          <text x="445" y="530" font-weight="700" fill="var(--accent)">Re-gate on the latest close → TOP 5</text>
+          <text x="445" y="548" font-size="11.5" fill="var(--muted)">14:00 and 15:00 UK · ~50 credits · sized in £</text>
+
+          <text x="780" y="149" font-size="11.5" fill="var(--drop)" font-weight="600">117 not offered</text>
+          <text x="780" y="164" font-size="10.5" fill="var(--drop)">never queried again</text>
+
+          <text x="90" y="592" font-size="11" fill="var(--accent)" font-weight="600">Your open</text>
+          <text x="90" y="606" font-size="11" fill="var(--accent)" font-weight="600">positions join in</text>
+          <text x="800" y="592" font-size="11" fill="var(--accent)" font-weight="600">Alerts out</text>
+          <text x="800" y="606" font-size="11" fill="var(--accent)" font-weight="600">(separate email)</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>The 117 names Trading 212 doesn't offer are excluded once and never queried again. Open positions are screened alongside the shortlist every run, whether or not they still rank.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>How one name becomes a pick</h2>
+    <p class="lede">Gates are pass/fail and run first — no amount of score rescues a failed gate. Only survivors are scored, and scoring is relative: z-scores are computed across whatever set survived that day.</p>
+    <figure>
+      <div class="scroll">
+      <svg viewBox="0 0 880 620" role="img" aria-label="A shortlist name passes five pass-fail gates, then is scored on four equally weighted factors; the composite ranks survivors and the top five are sized and emailed">
+        <defs>
+          <marker id="b-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+          </marker>
+          <marker id="b-drop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--drop)"/>
+          </marker>
+          <marker id="b-acc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+
+        <text x="440" y="24" text-anchor="middle" font-size="12" font-weight="600" fill="var(--muted)" letter-spacing=".06em">STEP 1 — FIVE GATES, ALL MUST PASS</text>
+
+        <!-- five gates -->
+        <g stroke="currentColor" fill="var(--soft)" stroke-width="1.5" color="var(--ink2)">
+          <rect x="25" y="40" width="150" height="82" rx="8"/>
+          <rect x="195" y="40" width="150" height="82" rx="8"/>
+          <rect x="365" y="40" width="150" height="82" rx="8"/>
+          <rect x="535" y="40" width="150" height="82" rx="8"/>
+          <rect x="705" y="40" width="150" height="82" rx="8"/>
+        </g>
+        <g text-anchor="middle" fill="var(--ink)">
+          <text x="100" y="62" font-size="12.5" font-weight="700">G1 · Trend</text>
+          <text x="100" y="82" font-size="11">above BOTH the</text>
+          <text x="100" y="97" font-size="11">50-day and 20-day</text>
+          <text x="100" y="112" font-size="11" fill="var(--muted)">moving average</text>
+
+          <text x="270" y="62" font-size="12.5" font-weight="700">G2 · Liquidity</text>
+          <text x="270" y="82" font-size="11">20-day average</text>
+          <text x="270" y="97" font-size="11">dollar volume</text>
+          <text x="270" y="112" font-size="11" fill="var(--muted)">≥ $2m, want ≥ $5m</text>
+
+          <text x="440" y="62" font-size="12.5" font-weight="700">G3 · Events</text>
+          <text x="440" y="82" font-size="11">no earnings in</text>
+          <text x="440" y="97" font-size="11">the next 10 days</text>
+          <text x="440" y="112" font-size="11" fill="var(--muted)">5 or fewer = out</text>
+
+          <text x="610" y="62" font-size="12.5" font-weight="700">G4 · Volatility</text>
+          <text x="610" y="82" font-size="11">20-day sigma must</text>
+          <text x="610" y="97" font-size="11">exist → sets the stop</text>
+          <text x="610" y="112" font-size="11" fill="var(--muted)">no sigma, no pick</text>
+
+          <text x="780" y="62" font-size="12.5" font-weight="700">G5 · Freshness</text>
+          <text x="780" y="82" font-size="11">prices from the last</text>
+          <text x="780" y="97" font-size="11">completed session</text>
+          <text x="780" y="112" font-size="11" fill="var(--muted)">stale = out</text>
+        </g>
+
+        <!-- fail arrows -->
+        <g stroke="var(--drop)" fill="none" stroke-width="1.4">
+          <line x1="100" y1="122" x2="100" y2="150" marker-end="url(#b-drop)"/>
+          <line x1="270" y1="122" x2="270" y2="150" marker-end="url(#b-drop)"/>
+          <line x1="440" y1="122" x2="440" y2="150" marker-end="url(#b-drop)"/>
+          <line x1="610" y1="122" x2="610" y2="150" marker-end="url(#b-drop)"/>
+          <line x1="780" y1="122" x2="780" y2="150" marker-end="url(#b-drop)"/>
+          <line x1="25" y1="168" x2="855" y2="168"/>
+        </g>
+        <text x="440" y="186" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--drop)">any FAIL → removed, with the failing gate named in the email</text>
+
+        <!-- survivors -->
+        <line x1="440" y1="196" x2="440" y2="222" stroke="currentColor" stroke-width="1.6" marker-end="url(#b-ar)" color="var(--ink2)"/>
+        <rect x="290" y="224" width="300" height="42" rx="8" fill="var(--keep-soft)" stroke="var(--keep)" stroke-width="1.6"/>
+        <text x="440" y="250" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Survivors — scored against each other</text>
+
+        <line x1="440" y1="266" x2="440" y2="300" stroke="currentColor" stroke-width="1.6" marker-end="url(#b-ar)" color="var(--ink2)"/>
+        <text x="35" y="292" text-anchor="start" font-size="12" font-weight="600" fill="var(--muted)" letter-spacing=".06em">STEP 2 — FOUR FACTORS, EQUAL WEIGHT</text>
+
+        <!-- four factors -->
+        <g stroke="currentColor" fill="var(--soft)" stroke-width="1.5" color="var(--ink2)">
+          <rect x="35" y="308" width="190" height="74" rx="8"/>
+          <rect x="245" y="308" width="190" height="74" rx="8"/>
+          <rect x="455" y="308" width="190" height="74" rx="8"/>
+          <rect x="665" y="308" width="190" height="74" rx="8"/>
+        </g>
+        <g text-anchor="middle" fill="var(--ink)">
+          <text x="130" y="330" font-size="12.5" font-weight="700">Momentum</text>
+          <text x="130" y="350" font-size="11">126-day return,</text>
+          <text x="130" y="365" font-size="11">skipping the last 21</text>
+
+          <text x="340" y="330" font-size="12.5" font-weight="700">Relative strength</text>
+          <text x="340" y="350" font-size="11">63-day return</text>
+          <text x="340" y="365" font-size="11">minus IWM's</text>
+
+          <text x="550" y="330" font-size="12.5" font-weight="700">Risk-adjusted</text>
+          <text x="550" y="350" font-size="11">momentum divided</text>
+          <text x="550" y="365" font-size="11">by its volatility</text>
+
+          <text x="760" y="330" font-size="12.5" font-weight="700">Near the high</text>
+          <text x="760" y="350" font-size="11">close as a share of</text>
+          <text x="760" y="365" font-size="11">the 52-week high</text>
+        </g>
+
+        <g stroke="currentColor" fill="none" stroke-width="1.4" color="var(--ink2)" stroke-linecap="round">
+          <line x1="130" y1="382" x2="130" y2="408"/>
+          <line x1="340" y1="382" x2="340" y2="408"/>
+          <line x1="550" y1="382" x2="550" y2="408"/>
+          <line x1="760" y1="382" x2="760" y2="408"/>
+          <line x1="130" y1="408" x2="760" y2="408"/>
+          <line x1="440" y1="408" x2="440" y2="434" marker-end="url(#b-ar)"/>
+        </g>
+
+        <rect x="230" y="436" width="420" height="52" rx="8" fill="var(--soft)" stroke="currentColor" stroke-width="1.6" color="var(--ink2)"/>
+        <text x="440" y="458" text-anchor="middle" font-size="12.5" font-weight="700" fill="var(--ink)">Composite = mean of the four z-scores</text>
+        <text x="440" y="477" text-anchor="middle" font-size="11.5" fill="var(--warn)">minus 0.5 for every gate that came back WARNING</text>
+
+        <line x1="440" y1="488" x2="440" y2="518" stroke="var(--accent)" stroke-width="1.8" marker-end="url(#b-acc)"/>
+
+        <rect x="270" y="520" width="340" height="56" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+        <text x="440" y="543" text-anchor="middle" font-size="13.5" font-weight="700" fill="var(--accent)">Rank · take the top 5 · size in £</text>
+        <text x="440" y="563" text-anchor="middle" font-size="11.5" fill="var(--ink2)">fewer than 5 pass? send fewer — never pad</text>
+
+        <text x="440" y="600" text-anchor="middle" font-size="11.5" fill="var(--muted)">No price target. No expected return. The score says "highest on these four measures today".</text>
+      </svg>
+      </div>
+      <figcaption>Gates are absolute; the score is relative. Because z-scores are computed across the day's survivors, a composite of +1.2 means "well above the others that passed today", not a fixed quality bar.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>The thresholds, exactly</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Gate</th><th>OK</th><th>WARNING (−0.5)</th><th>FAIL (removed)</th></tr></thead>
+        <tbody>
+          <tr><td class="k">G1 Trend</td><td>above both averages, ≥2% clear of the 50-day</td><td>above both, within 2% of the 50-day</td><td>below either average</td></tr>
+          <tr><td class="k">G2 Liquidity</td><td>≥ $5m average daily volume</td><td>$2m – $5m</td><td>under $2m</td></tr>
+          <tr><td class="k">G3 Events</td><td>no earnings for 10 trading days</td><td>earnings on day 6–10</td><td>earnings within 5 days</td></tr>
+          <tr><td class="k">G4 Volatility</td><td>sigma from ≥ 20 sessions</td><td>10–19 sessions</td><td>no sigma available</td></tr>
+          <tr><td class="k">G5 Freshness</td><td>last completed session</td><td>—</td><td>stale or missing</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>What happens to a pick you buy</h2>
+    <div class="callout">
+      <p><strong>Sizing.</strong> <code>stop% = 3.0 × the stock's 20-day daily sigma</code>, then <code>size £ = min(5% of account ÷ stop%, 25% of account, cash)</code>. On typical small-cap volatility the 25% cap binds, so four positions is a fully-invested book. The £ figure converts to dollars at the live rate plus Trading 212's 0.15% FX fee.</p>
+      <p><strong>Exits, in order.</strong> Stop hit, or 21 trading days elapsed. Nothing else — no profit target, no trailing stop.</p>
+      <p><strong>Alerts.</strong> A close below the 20-day average, a breached stop, earnings moving inside five days, or day 19 of 21 each send their own email. The 20-day alert is a prompt to look, not an instruction to sell: tested as an exit rule it cut the median month by £2 and quadrupled the number of trades.</p>
+      <p><strong>Monitoring only sees what is logged.</strong> A position bought and not recorded on the desk gets no stop check, no alert and no hold-period countdown.</p>
+    </div>
+  </section>
+</div>

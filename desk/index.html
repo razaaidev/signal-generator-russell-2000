@@ -1,0 +1,524 @@
+<title>Small Cap Signal Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#f5f7f8; --panel:#ffffff; --ink:#101a22; --ink2:#3b4a56; --muted:#6a7885;
+  --line:#dde3e8; --soft:#eef2f5; --field:#f8fafb;
+  --accent:#16637a; --accent-ink:#ffffff;
+  --ok:#1d7a4e; --okbg:#e4f3ea; --warn:#8f5b00; --warnbg:#fbf0d9; --bad:#b32d2d; --badbg:#fbe7e7;
+  --shadow:0 1px 2px rgba(16,26,34,.05), 0 10px 26px -18px rgba(16,26,34,.4);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --ground:#0d1418; --panel:#152027; --ink:#e7eef3; --ink2:#bcc8d1; --muted:#8a99a5;
+  --line:#26343d; --soft:#1b272f; --field:#1a262d;
+  --accent:#5fb3cc; --accent-ink:#0d1418;
+  --ok:#5ccb93; --okbg:#143326; --warn:#e0ac54; --warnbg:#382c14; --bad:#ef7f7f; --badbg:#3a1d1d;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.9);
+}}
+:root[data-theme="dark"]{
+  --ground:#0d1418; --panel:#152027; --ink:#e7eef3; --ink2:#bcc8d1; --muted:#8a99a5;
+  --line:#26343d; --soft:#1b272f; --field:#1a262d;
+  --accent:#5fb3cc; --accent-ink:#0d1418;
+  --ok:#5ccb93; --okbg:#143326; --warn:#e0ac54; --warnbg:#382c14; --bad:#ef7f7f; --badbg:#3a1d1d;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.9);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding-block:24px 56px;padding-left:18px;padding-right:18px}
+@media(max-width:520px){.wrap{padding-left:16px;padding-right:16px}}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h1{font-family:"Source Serif 4",Georgia,serif;font-size:1.22rem;font-weight:600;margin:0;letter-spacing:-.01em}
+h2{font-family:"Source Serif 4",Georgia,serif;font-size:1.05rem;font-weight:600;margin:0 0 12px}
+.sync{font-size:.8rem;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+.stack{display:grid;gap:16px}
+.grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,6fr);gap:16px;align-items:start}
+@media(max-width:880px){.grid{grid-template-columns:1fr}}
+.figs{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-end}
+.fig .n{font-size:clamp(1.8rem,5vw,2.4rem);font-weight:700;line-height:1;letter-spacing:-.02em}
+.fig b{font-size:1.15rem}
+.fig small{display:block;color:var(--muted);font-size:.78rem;margin-top:4px}
+.sub{font-size:.8rem;color:var(--muted);font-weight:500}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:999px;font-size:.8rem;font-weight:600}
+.ok{color:var(--ok);background:var(--okbg)}.warn{color:var(--warn);background:var(--warnbg)}.bad{color:var(--bad);background:var(--badbg)}
+.neutral{color:var(--ink2);background:var(--soft)}
+label{display:block;font-size:.78rem;color:var(--muted);font-weight:500;margin-bottom:4px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--field);
+  border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-height:36px}
+input[readonly]{opacity:.75}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:9px}
+.row3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:460px){.row3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+button{font:inherit;font-weight:600;border-radius:8px;padding:7px 13px;border:1px solid var(--line);
+  background:var(--field);color:var(--ink);cursor:pointer;min-height:36px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.msg{font-size:.84rem;margin-top:8px;min-height:1.1em}
+.msg.err{color:var(--bad)}.msg.good{color:var(--ok)}
+.note{font-size:.82rem;color:var(--muted);margin:8px 0 0}
+.pos{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--panel)}
+.pos-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.pos-head strong{font-size:1.02rem}
+.pnl{font-weight:700;text-align:right}
+.pnl .alt{display:block;font-weight:500;font-size:.8rem;color:var(--muted)}
+.meta{font-size:.82rem;color:var(--muted);margin:3px 0 0}
+.flags{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+.flags .pill{font-size:.76rem;padding:3px 8px}
+.empty{color:var(--muted);font-size:.9rem;padding:14px;border:1px dashed var(--line);border-radius:10px}
+.good{color:var(--ok)}.loss{color:var(--bad)}
+.pick{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline;
+  padding:9px 0;border-bottom:1px solid var(--soft)}
+.pick:last-child{border-bottom:none}
+.rank{font-weight:700;color:var(--muted);font-size:.85rem;min-width:1.4em}
+.pick .sym{font-weight:700}
+.pick .det{font-size:.8rem;color:var(--muted)}
+.pick .sc{font-weight:600;font-size:.85rem;white-space:nowrap}
+.alert{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--soft);font-size:.87rem}
+.alert:last-child{border-bottom:none}
+.alert time{color:var(--muted);font-size:.78rem;white-space:nowrap;min-width:5.6em}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.hidden{display:none!important}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.85rem;min-width:520px}
+th,td{text-align:right;padding:7px 9px;border-bottom:1px solid var(--soft)}
+th:first-child,td:first-child{text-align:left}
+th{font-size:.73rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--line)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lower{margin-top:16px}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <h1>Small Cap Signal Desk</h1>
+    <span class="sync" id="sync">Connecting…</span>
+  </div>
+
+  <section class="panel" aria-label="Account">
+    <div class="figs">
+      <div class="fig"><div class="n" id="acct">£100.00</div><small>Account value <span id="acct-usd" class="sub"></span></small></div>
+      <div class="fig"><b id="pl">+0.0%</b><small>vs £100 start</small></div>
+      <div class="fig"><b id="cashv">£100.00</b><small>Cash</small></div>
+      <div class="fig"><b id="expo">£0.00</b><small>Invested <span id="expo-usd" class="sub"></span></small></div>
+      <div class="fig"><b id="npos">0 / 4</b><small>Open positions</small></div>
+      <div class="fig"><b id="fxv">—</b><small>GBP/USD <span id="fxat" class="sub"></span></small></div>
+    </div>
+    <div class="pills" id="pills"></div>
+  </section>
+
+  <div class="grid lower">
+    <div class="stack">
+      <section class="panel" aria-labelledby="h-log">
+        <h2 id="h-log">Log a position</h2>
+        <div class="row">
+          <div><label for="f-sym">Symbol</label><input id="f-sym" placeholder="e.g. CRDO" autocomplete="off"></div>
+          <div><label for="f-t212">T212 ticker</label><input id="f-t212" placeholder="CRDO_US_EQ" autocomplete="off"></div>
+        </div>
+        <div class="row row3">
+          <div><label for="f-date">Entry date</label><input id="f-date" type="date"></div>
+          <div><label for="f-px">Entry price $</label><input id="f-px" type="number" step="0.0001" min="0" inputmode="decimal"></div>
+          <div><label for="f-qty">Quantity</label><input id="f-qty" type="number" step="0.0001" min="0" inputmode="decimal"></div>
+        </div>
+        <div class="row row3">
+          <div><label for="f-stop">Stop price $</label><input id="f-stop" type="number" step="0.0001" min="0" inputmode="decimal"></div>
+          <div><label for="f-est">Estimated cost £</label><input id="f-est" readonly tabindex="-1" placeholder="—"></div>
+          <div><label for="f-cost">Actual cost £</label><input id="f-cost" type="number" step="0.01" min="0" inputmode="decimal"></div>
+        </div>
+        <p class="note" id="f-fxnote" style="margin:-4px 0 10px"></p>
+        <div class="row"><div style="grid-column:1/-1"><label for="f-why">Why this trade</label><input id="f-why" autocomplete="off" placeholder="Rank, score, what you saw"></div></div>
+        <div class="actions"><button class="primary" id="f-save">Log position</button></div>
+        <div class="msg" id="f-msg" role="status"></div>
+        <p class="note">Estimated cost converts $ at the current rate and adds the 0.15% FX fee. Use the actual £ figure from your Trading 212 contract note if it differs — that is what leaves your account.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="h-alerts">
+        <h2 id="h-alerts">Alerts</h2>
+        <div id="alerts"></div>
+      </section>
+    </div>
+
+    <div class="stack">
+      <section class="panel" aria-labelledby="h-pos">
+        <h2 id="h-pos">Open positions</h2>
+        <div id="positions"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-picks">
+        <h2 id="h-picks">Latest picks</h2>
+        <p class="note" style="margin:-6px 0 10px" id="picks-when">No run recorded yet.</p>
+        <div id="picks"></div>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel lower" aria-label="History and settings">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="closed">Closed trades</button>
+      <button role="tab" aria-selected="false" data-tab="shortlist">Shortlist</button>
+      <button role="tab" aria-selected="false" data-tab="settings">Settings</button>
+    </div>
+    <div data-panel="closed"><div id="closed"></div></div>
+    <div data-panel="shortlist" class="hidden"><div id="shortlist"></div></div>
+    <div data-panel="settings" class="hidden">
+      <div class="row row3">
+        <div><label for="s-cash">Cash £</label><input id="s-cash" type="number" step="0.01" inputmode="decimal"></div>
+        <div><label for="s-fx">GBP/USD rate</label><input id="s-fx" type="number" step="0.0001" inputmode="decimal"></div>
+        <div><label for="s-fee">FX fee %</label><input id="s-fee" type="number" step="0.01" inputmode="decimal"></div>
+      </div>
+      <div class="row row3">
+        <div><label for="s-maxpos">Max positions</label><input id="s-maxpos" type="number" step="1" inputmode="numeric"></div>
+        <div><label for="s-risk">Risk per trade %</label><input id="s-risk" type="number" step="0.5" inputmode="decimal"></div>
+        <div><label for="s-cap">Max per position %</label><input id="s-cap" type="number" step="1" inputmode="decimal"></div>
+      </div>
+      <div class="row row3">
+        <div><label for="s-sig">Stop, in daily sigmas</label><input id="s-sig" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label for="s-hold">Max hold, trading days</label><input id="s-hold" type="number" step="1" inputmode="numeric"></div>
+      </div>
+      <div class="actions"><button class="primary" id="s-save">Save settings</button></div>
+      <div class="msg" id="s-msg" role="status"></div>
+      <p class="note">The agent refreshes the GBP/USD rate on each run; set it by hand if you need to before then. Defaults elsewhere come from the calibration: stop at 3.0 daily sigmas, 21-day maximum hold, 4 positions, 25% cap.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const START = 100;
+  const DEFAULT = () => ({
+    v:2, cash:START, positions:[], closed:[],
+    fx:{rate:1.27, at:null},
+    settings:{maxPos:4, riskPct:5, capPct:25, stopSigmas:3.0, maxHold:21, fxFeePct:0.15},
+    updatedAt:null
+  });
+  let state = DEFAULT(), picks=null, shortlist=null, alerts=[];
+  let db=null, ref=null, mode='local', writing=Promise.resolve();
+
+  const $ = id => document.getElementById(id);
+  const gbp = n => (n<0?'-':'')+'£'+Math.abs(Number(n)||0).toFixed(2);
+  const usd = n => (n<0?'-':'')+'$'+Math.abs(Number(n)||0).toFixed(2);
+  const pct = n => (n>0?'+':'')+(Number(n)||0).toFixed(1)+'%';
+  const num = v => { const n=parseFloat(v); return isFinite(n)?n:NaN; };
+  const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const today = () => new Date().toISOString().slice(0,10);
+  const el = (t,c,x) => { const e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e; };
+  const tdays = (a,b) => { let d=new Date(a+'T12:00:00'), e=new Date(b+'T12:00:00'), n=0;
+    while(d<e){ d.setDate(d.getDate()+1); const w=d.getDay(); if(w!==0&&w!==6) n++; } return n; };
+
+  // ---- currency -------------------------------------------------------
+  const rate = () => (state.fx && state.fx.rate > 0) ? state.fx.rate : 1.27;
+  const fee  = () => (state.settings.fxFeePct ?? 0.15)/100;
+  const toGbp   = d => (Number(d)||0) / rate();              // mid-market
+  const buyGbp  = d => toGbp(d) * (1 + fee());               // what a purchase costs you
+  const sellGbp = d => toGbp(d) * (1 - fee());               // what a sale nets you
+
+  function posUsdNow(p){ return p.qty * (p.lastPrice ?? p.entry); }
+  function derive(){
+    const usdInv = state.positions.reduce((t,p)=> t + posUsdNow(p), 0);
+    const gbpInv = sellGbp(usdInv);                           // mark at what you'd actually receive
+    return {usdInv, gbpInv, account: state.cash + gbpInv};
+  }
+
+  function save(){
+    state.updatedAt = new Date().toISOString();
+    const snap = JSON.parse(JSON.stringify(state));
+    if (mode==='db'){
+      writing = writing.then(()=> ref.set(snap)).catch(()=> setSync('Save failed — try again.', true));
+    } else { try{ localStorage.setItem('sigdesk', JSON.stringify(snap)); }catch(e){} }
+    render();
+  }
+  function setSync(t,bad){ const s=$('sync'); s.textContent=t; s.style.color = bad?'var(--bad)':''; }
+
+  function render(){
+    const d = derive(), s = state.settings;
+    $('acct').textContent = gbp(d.account);
+    $('acct-usd').textContent = '≈ ' + usd(d.account * rate());
+    const pl = (d.account-START)/START*100;
+    $('pl').textContent = pct(pl); $('pl').className = pl<0?'loss':'good';
+    $('cashv').textContent = gbp(state.cash);
+    $('expo').textContent = gbp(d.gbpInv);
+    $('expo-usd').textContent = d.usdInv ? '≈ ' + usd(d.usdInv) : '';
+    $('npos').textContent = state.positions.length+' / '+s.maxPos;
+    $('fxv').textContent = rate().toFixed(4);
+    $('fxat').textContent = state.fx && state.fx.at ? 'as of '+String(state.fx.at).slice(0,10) : 'not refreshed yet';
+
+    const pills = $('pills'); pills.replaceChildren();
+    const breached = state.positions.filter(p => p.lastPrice!=null && p.stop && p.lastPrice <= p.stop);
+    const due = state.positions.filter(p => tdays(p.date, today()) >= s.maxHold);
+    if (breached.length) pills.append(el('span','pill bad', breached.length+' stop breached'));
+    if (due.length) pills.append(el('span','pill warn', due.length+' past max hold'));
+    if (!breached.length && !due.length) pills.append(el('span','pill ok','No action required'));
+    pills.append(el('span','pill neutral', state.closed.length+' closed trades'));
+    if (state.positions.length >= s.maxPos) pills.append(el('span','pill neutral','All slots in use'));
+
+    renderPositions(); renderPicks(); renderAlerts(); renderClosed(); renderShortlist();
+    fillSettings(); updateEstimate();
+  }
+
+  function renderPositions(){
+    const box = $('positions'); box.replaceChildren();
+    const s = state.settings;
+    if (!state.positions.length){
+      box.append(el('div','empty','No open positions. Log one after you buy it in Trading 212 — the alerts and monitoring have nothing to watch until then.'));
+      return; }
+    state.positions.forEach(p => {
+      const px = p.lastPrice ?? p.entry;
+      const chg = (px - p.entry)/p.entry*100;
+      const gbpNow = sellGbp(posUsdNow(p));
+      const plGbp = gbpNow - (p.costGbp ?? gbpNow);
+      const card = el('div','pos');
+      const head = el('div','pos-head');
+      head.append(el('strong', null, p.symbol + (p.t212 ? ' · '+p.t212 : '')));
+      const pn = el('span','pnl '+(chg<0?'loss':'good'), pct(chg));
+      pn.append(el('span','alt', gbp(plGbp) + '  ·  ' + usd(posUsdNow(p) - p.qty*p.entry)));
+      head.append(pn); card.append(head);
+      const held = tdays(p.date, today());
+      card.append(el('div','meta',
+        `${p.qty} @ ${usd(p.entry)} on ${p.date} · stop ${p.stop!=null?usd(p.stop):'—'}`
+        + (p.sigma ? ` · sigma ${(p.sigma*100).toFixed(2)}%/day` : '')));
+      card.append(el('div','meta',
+        `Now ${p.lastPrice!=null?usd(p.lastPrice):'—'}${p.lastAt?' ('+String(p.lastAt).slice(0,10)+')':''}`
+        + ` · value ${gbp(gbpNow)} (${usd(posUsdNow(p))})`
+        + ` · cost ${gbp(p.costGbp ?? 0)}`));
+      if (p.why) card.append(el('div','meta','Why: '+p.why));
+      const f = el('div','flags');
+      if (p.lastPrice!=null && p.stop){
+        if (p.lastPrice <= p.stop) f.append(el('span','pill bad','Stop breached'));
+        else { const room=(p.lastPrice-p.stop)/p.lastPrice*100;
+          f.append(el('span','pill '+(room<2?'warn':'ok'),'Stop '+room.toFixed(1)+'% away')); }
+      } else f.append(el('span','pill warn','No current price yet'));
+      if (p.below20 === true) f.append(el('span','pill warn','Below 20-day'));
+      else if (p.below20 === false) f.append(el('span','pill ok','Above 20-day'));
+      f.append(el('span','pill '+(held>=s.maxHold?'bad':held>=s.maxHold-2?'warn':'ok'),'Day '+held+' of '+s.maxHold));
+      if (p.nextEarnings) f.append(el('span','pill neutral','Earnings '+p.nextEarnings));
+      card.append(f);
+      const act = el('div','actions'); act.style.marginTop='10px';
+      const close = el('button',null,'Close position');
+      close.onclick = ()=> openClose(card, p);
+      act.append(close); card.append(act);
+      box.append(card);
+    });
+  }
+
+  function openClose(card, p){
+    if (card.querySelector('.closebox')) return;
+    const box = el('div','closebox');
+    box.style.cssText='margin-top:10px;border-top:1px dashed var(--line);padding-top:10px';
+    const mk=(lab,type,val,id)=>{const w=el('div');const l=el('label',null,lab);l.htmlFor=id;
+      const i=document.createElement(type==='select'?'select':'input');i.id=id;
+      if(type!=='select'){i.type=type;i.step='any';if(val!=null)i.value=val;} w.append(l,i);return [w,i];};
+    const r1=el('div','row row3');
+    const [w1,iq]=mk('Quantity sold','number',p.qty,'cq'+p.id);
+    const [w2,ip]=mk('Exit price $','number',p.lastPrice ?? '','cp'+p.id);
+    const [w3,ir]=mk('Proceeds £','number','','cr'+p.id);
+    r1.append(w1,w2,w3);
+    const hint = el('p','note'); hint.style.margin='-2px 0 8px';
+    const recalc=()=>{ const q=num(iq.value), x=num(ip.value);
+      if(q>0&&x>0){ const est=sellGbp(q*x);
+        hint.textContent='Estimated proceeds '+gbp(est)+' — '+usd(q*x)+' at '+rate().toFixed(4)+' less the '+(fee()*100).toFixed(2)+'% FX fee.';
+        if(!ir.dataset.touched) ir.value=est.toFixed(2);
+      } else hint.textContent=''; };
+    iq.addEventListener('input',recalc); ip.addEventListener('input',recalc);
+    ir.addEventListener('input',()=>{ ir.dataset.touched='1'; });
+    const r2=el('div','row');
+    const [w4,ire]=mk('Reason','select',null,'cre'+p.id);
+    ['Stop hit','Max hold reached','Trend alert','Earnings rule','Other'].forEach(o=>ire.append(el('option',null,o)));
+    const [w5,idt]=mk('Date','date',today(),'cd'+p.id);
+    r2.append(w4,w5);
+    const r3=el('div','row'); const [w6,inote]=mk('Lesson or note','text','','cn'+p.id);
+    w6.style.gridColumn='1/-1'; r3.append(w6);
+    const act=el('div','actions'); const ok=el('button','primary','Log sale'); const ca=el('button',null,'Cancel');
+    act.append(ok,ca);
+    const msg=el('div','msg'); msg.setAttribute('role','status');
+    box.append(r1,hint,r2,r3,act,msg); card.append(box); recalc();
+    ca.onclick=()=> box.remove();
+    ok.onclick=()=>{
+      const qty=num(iq.value), px=num(ip.value), proceeds=num(ir.value);
+      if(!(qty>0)||qty>p.qty+1e-9){ msg.className='msg err'; msg.textContent='Quantity must be between 0 and '+p.qty+'.'; return; }
+      if(!(px>0)){ msg.className='msg err'; msg.textContent='Enter the exit price.'; return; }
+      if(!(proceeds>0)){ msg.className='msg err'; msg.textContent='Enter the £ proceeds.'; return; }
+      const frac=qty/p.qty, cost=(p.costGbp ?? 0)*frac;
+      state.closed.push({id:uid(), symbol:p.symbol, t212:p.t212, openDate:p.date,
+        closeDate:idt.value||today(), entry:p.entry, exit:px, qty,
+        costGbp:+cost.toFixed(2), proceedsGbp:+proceeds.toFixed(2),
+        plGbp:+(proceeds-cost).toFixed(2), plPct:+((px-p.entry)/p.entry*100).toFixed(2),
+        fxRate:rate(), reason:ire.value, note:inote.value.trim()});
+      state.cash += proceeds;
+      if(qty >= p.qty-1e-9) state.positions=state.positions.filter(x=>x.id!==p.id);
+      else { p.qty=+(p.qty-qty).toFixed(4); p.costGbp=+((p.costGbp??0)-cost).toFixed(2); }
+      save();
+    };
+  }
+
+  function renderPicks(){
+    const box=$('picks'); box.replaceChildren(); const when=$('picks-when');
+    if(!picks || !Array.isArray(picks.top) || !picks.top.length){
+      when.textContent='No run recorded yet.';
+      box.append(el('div','empty','The agent writes its top 5 here after each run.')); return; }
+    when.textContent = 'From the '+(picks.slot||'latest')+' run, '+String(picks.runAt||'').slice(0,16).replace('T',' ')
+      + (picks.regime ? ' · '+picks.regime : '');
+    picks.top.forEach((p,i)=>{
+      const row=el('div','pick');
+      row.append(el('span','rank',String(i+1)));
+      const mid=el('div');
+      mid.append(el('div','sym',(p.symbol||'?')+(p.t212?'  ·  '+p.t212:'')));
+      const bits=[];
+      if(p.stopPrice!=null) bits.push('stop '+usd(p.stopPrice)+(p.stopPct!=null?' ('+Number(p.stopPct).toFixed(1)+'%)':''));
+      if(p.sizeGbp!=null) bits.push('size '+gbp(p.sizeGbp)+' ≈ '+usd(p.sizeGbp*rate()));
+      if(p.holdDays!=null) bits.push('hold ≤'+p.holdDays+'d');
+      if(p.nextEarnings) bits.push('earnings '+p.nextEarnings);
+      mid.append(el('div','det',bits.join(' · ')));
+      if(p.reason) mid.append(el('div','det',p.reason));
+      row.append(mid);
+      row.append(el('span','sc', p.score!=null?'z '+Number(p.score).toFixed(2):''));
+      box.append(row);
+    });
+  }
+
+  function renderAlerts(){
+    const box=$('alerts'); box.replaceChildren();
+    if(!alerts.length){ box.append(el('div','empty','No alerts. The agent posts trend and stop warnings here and by email.')); return; }
+    alerts.slice(0,20).forEach(a=>{
+      const row=el('div','alert');
+      row.append(el('time',null,String(a.at||'').slice(5,16).replace('T',' ')));
+      const sev=a.severity==='action'?'bad':a.severity==='warn'?'warn':'neutral';
+      row.append(el('span','pill '+sev,a.symbol||'—'));
+      row.append(el('span',null,a.message||''));
+      box.append(row);
+    });
+  }
+
+  function renderClosed(){
+    const box=$('closed'); box.replaceChildren();
+    if(!state.closed.length){ box.append(el('div','empty','Closed trades appear here once you log a sale.')); return; }
+    const wins=state.closed.filter(t=>t.plGbp>0);
+    const sum=el('div','pills'); sum.style.margin='0 0 12px';
+    sum.append(el('span','pill '+(wins.length/state.closed.length>=0.5?'ok':'warn'),
+      'Hit rate '+(wins.length/state.closed.length*100).toFixed(0)+'% of '+state.closed.length));
+    const tot=state.closed.reduce((a,t)=>a+t.plGbp,0);
+    sum.append(el('span','pill '+(tot>=0?'ok':'bad'),'Realised '+gbp(tot)));
+    box.append(sum);
+    const sc=el('div','scroll'), tb=el('table'), th=el('thead'), tr=el('tr');
+    ['Closed','Symbol','Qty','Entry $','Exit $','P&L £','Move %','Reason'].forEach(h=>tr.append(el('th',null,h)));
+    th.append(tr); tb.append(th);
+    const bd=el('tbody');
+    state.closed.slice().reverse().forEach(t=>{
+      const r=el('tr');
+      [t.closeDate,t.symbol,t.qty,usd(t.entry),usd(t.exit),gbp(t.plGbp),pct(t.plPct),t.reason]
+        .forEach((v,i)=>{const c=el('td',null,String(v)); if(i===5||i===6)c.className=t.plGbp<0?'loss':'good'; r.append(c);});
+      bd.append(r);
+    });
+    tb.append(bd); sc.append(tb); box.append(sc);
+  }
+
+  function renderShortlist(){
+    const box=$('shortlist'); box.replaceChildren();
+    const items = shortlist && Array.isArray(shortlist.names) ? shortlist.names : [];
+    if(!items.length){ box.append(el('div','empty','The weekly rank writes its shortlist here.')); return; }
+    box.append(el('p','note','Ranked '+String(shortlist.rankedAt||'').slice(0,10)
+      +' from '+(shortlist.universeSize||'?')+' names'
+      +(shortlist.gatesFailed!=null?', '+shortlist.gatesFailed+' dropped at the gates':'')
+      +'. The daily runs screen only these plus your open positions.'));
+    const sc=el('div','scroll'), tb=el('table'), th=el('thead'), tr=el('tr');
+    ['#','Symbol','T212 ticker','Score','Close $','Sigma %/day','$ volume'].forEach(h=>tr.append(el('th',null,h)));
+    th.append(tr); tb.append(th);
+    const bd=el('tbody');
+    items.forEach((n,i)=>{
+      const r=el('tr');
+      [i+1, n.symbol||'', n.t212||'', n.score!=null?Number(n.score).toFixed(2):'',
+       n.close!=null?usd(n.close):'', n.sigma!=null?(n.sigma*100).toFixed(2):'',
+       n.dollarVol!=null?'$'+(n.dollarVol/1e6).toFixed(1)+'m':'']
+        .forEach(v=>r.append(el('td',null,String(v))));
+      bd.append(r);
+    });
+    tb.append(bd); sc.append(tb); box.append(sc);
+  }
+
+  function fillSettings(){
+    if(document.activeElement && document.activeElement.id && document.activeElement.id.startsWith('s-')) return;
+    const s=state.settings;
+    $('s-cash').value=Number(state.cash).toFixed(2);
+    $('s-fx').value=rate(); $('s-fee').value=s.fxFeePct ?? 0.15;
+    $('s-maxpos').value=s.maxPos; $('s-risk').value=s.riskPct; $('s-cap').value=s.capPct;
+    $('s-sig').value=s.stopSigmas; $('s-hold').value=s.maxHold;
+  }
+
+  function updateEstimate(){
+    const px=num($('f-px').value), qty=num($('f-qty').value);
+    if(px>0 && qty>0){
+      const est=buyGbp(px*qty);
+      $('f-est').value=est.toFixed(2);
+      $('f-fxnote').textContent = usd(px*qty)+' at '+rate().toFixed(4)+' plus the '+(fee()*100).toFixed(2)+'% FX fee.';
+      if(!$('f-cost').dataset.touched) $('f-cost').value=est.toFixed(2);
+    } else { $('f-est').value=''; $('f-fxnote').textContent=''; }
+  }
+  ['f-px','f-qty'].forEach(i=>$(i).addEventListener('input',updateEstimate));
+  $('f-cost').addEventListener('input',()=>{ $('f-cost').dataset.touched='1'; });
+
+  $('f-date').value = today();
+  $('f-save').onclick = ()=>{
+    const m=$('f-msg');
+    const sym=$('f-sym').value.trim().toUpperCase();
+    const px=num($('f-px').value), qty=num($('f-qty').value), stop=num($('f-stop').value), cost=num($('f-cost').value);
+    const fail=t=>{m.className='msg err'; m.textContent=t;};
+    if(!sym) return fail('Enter the symbol.');
+    if(!(px>0)||!(qty>0)) return fail('Enter the fill price and quantity.');
+    if(!(stop>0)||stop>=px) return fail('Enter a stop price below the fill price.');
+    if(!(cost>0)) return fail('Enter what the position cost in £.');
+    if(cost > state.cash + 0.01) return fail('That costs '+gbp(cost)+' but cash is '+gbp(state.cash)+'.');
+    state.cash -= cost;
+    state.positions.push({id:uid(), symbol:sym, t212:$('f-t212').value.trim().toUpperCase()||null,
+      date:$('f-date').value||today(), entry:px, qty, stop, costGbp:cost, fxAtEntry:rate(),
+      why:$('f-why').value.trim()||null,
+      lastPrice:null, lastAt:null, sigma:null, below20:null, nextEarnings:null});
+    ['f-sym','f-t212','f-px','f-qty','f-stop','f-cost','f-why','f-est'].forEach(i=>$(i).value='');
+    delete $('f-cost').dataset.touched; $('f-fxnote').textContent='';
+    m.className='msg good'; m.textContent='Logged '+sym+'. Place the stop order in Trading 212 if you haven’t.';
+    save();
+  };
+
+  $('s-save').onclick = ()=>{
+    const m=$('s-msg'), s=state.settings;
+    const v={cash:num($('s-cash').value), fx:num($('s-fx').value), fee:num($('s-fee').value),
+             maxPos:num($('s-maxpos').value), risk:num($('s-risk').value), cap:num($('s-cap').value),
+             sig:num($('s-sig').value), hold:num($('s-hold').value)};
+    if(Object.values(v).some(x=>!isFinite(x)||x<0)){ m.className='msg err'; m.textContent='Every setting needs a number of 0 or more.'; return; }
+    if(!(v.fx>0)){ m.className='msg err'; m.textContent='The GBP/USD rate must be above zero.'; return; }
+    state.cash=v.cash; state.fx={rate:v.fx, at:new Date().toISOString()};
+    s.fxFeePct=v.fee; s.maxPos=Math.round(v.maxPos); s.riskPct=v.risk; s.capPct=v.cap;
+    s.stopSigmas=v.sig; s.maxHold=Math.round(v.hold);
+    m.className='msg good'; m.textContent='Settings saved.'; document.activeElement.blur(); save();
+  };
+
+  document.querySelectorAll('[role=tab]').forEach(b=> b.onclick=()=>{
+    document.querySelectorAll('[role=tab]').forEach(x=>x.setAttribute('aria-selected', x===b?'true':'false'));
+    document.querySelectorAll('[data-panel]').forEach(p=>p.classList.toggle('hidden', p.dataset.panel!==b.dataset.tab));
+  });
+
+  try{ const r=localStorage.getItem('sigdesk'); if(r) state=Object.assign(DEFAULT(), JSON.parse(r)); }catch(e){}
+  render(); setSync('Saved in this browser only');
+
+  if (window.claude && window.claude.use){
+    window.claude.use('db').then(d=>{
+      if(!d){ setSync('Saved in this browser only'); return; }
+      db=d; ref=db.doc('desk/state');
+      ref.onSnapshot(snap=>{
+        if(snap.exists){ state=Object.assign(DEFAULT(), snap.data()); mode='db';
+          setSync('Synced · '+(state.updatedAt?String(state.updatedAt).slice(0,16).replace('T',' ')+' UTC':'now')); render(); }
+        else if(mode!=='db'){ mode='db'; setSync('Synced'); save(); }
+      }, ()=>{ mode='local'; setSync('Sync unavailable — saving in this browser only.', true); });
+      db.doc('desk/fx').onSnapshot(s=>{ if(s.exists){ const f=s.data();
+        if(f && f.rate>0){ state.fx={rate:f.rate, at:f.at||null}; render(); } } }, ()=>{});
+      db.doc('signals/latest').onSnapshot(s=>{ if(s.exists){ picks=s.data(); render(); } }, ()=>{});
+      db.doc('shortlist/current').onSnapshot(s=>{ if(s.exists){ shortlist=s.data(); render(); } }, ()=>{});
+      db.collection('alerts').orderBy('at','desc').limit(20)
+        .onSnapshot(q=>{ alerts=(q.docs||[]).map(x=>x.data()); render(); }, ()=>{});
+    }).catch(()=> setSync('Saved in this browser only'));
+  }
+})();
+</script>
